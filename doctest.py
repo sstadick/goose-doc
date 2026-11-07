@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Extract doc examples with goosdoc, then compile and run each in isolation.
+"""Extract doc examples with goose-doc, then compile and run each in isolation.
 
 Examples are trusted executable code, not sandboxed. All Goose fences run
 unless explicitly marked `goose ignore`. The optional preamble supplies
@@ -48,12 +48,12 @@ def main():
         return 1
     examples = [json.loads(line) for line in extracted.stdout.splitlines()]
     if not examples:
-        print("goosdoc: no executable examples selected", file=sys.stderr)
+        print("goose-doc: no executable examples selected", file=sys.stderr)
         return 1
     failed = 0
     # A direct child of the source root lets preambles import the checkout
     # with `from ".."`, including its build file and native headers.
-    with tempfile.TemporaryDirectory(prefix=".goosdoc-", dir=root) as directory:
+    with tempfile.TemporaryDirectory(prefix=".goose-doc-", dir=root) as directory:
         temporary = Path(directory)
         for number, example in enumerate(examples, 1):
             label = f"{example['path']}:{example['line']} ({example['name']})"
@@ -86,5 +86,5 @@ if __name__ == "__main__":
     try:
         sys.exit(main())
     except (OSError, ValueError, subprocess.TimeoutExpired) as error:
-        print(f"goosdoc: {error}", file=sys.stderr)
+        print(f"goose-doc: {error}", file=sys.stderr)
         sys.exit(1)

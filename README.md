@@ -1,20 +1,20 @@
-# goosdoc
+# goose-doc
 
 Turn [Goose](https://github.com/aardappel/goose) source comments into a
 Markdown API reference with names, signatures, examples, and source links.
 Run the examples as tests so readers can trust the code they copy.
 
-**[API reference](API.md)** · [Latest release: v0.2.0](https://github.com/sstadick/goosdoc/releases/tag/v0.2.0)
+**[API reference](API.md)** · [Pre-migration release: v0.2.0](https://github.com/sstadick/goose-doc/releases/tag/v0.2.0)
 
 Generating documentation requires Goose. Running examples also requires
 Python 3; native builds need GCC or Clang.
 
 ## Generate your first reference
 
-From your library directory, check out goosdoc alongside it:
+From your library directory, check out goose-doc alongside it:
 
 ```sh
-git clone --branch v0.2.0 --depth 1 https://github.com/sstadick/goosdoc.git ../goosdoc
+git clone --branch main --depth 1 https://github.com/sstadick/goose-doc.git ../goose-doc
 ```
 
 Save this as `sample.goose`:
@@ -33,7 +33,7 @@ fn twice(n: i64) -> i64 { n * 2 }
 Generate `API.md`, then link it from your README:
 
 ```sh
-goose run ../goosdoc/main.goose -- --title "Sample API" \
+goose run ../goose-doc/main.goose -- --title "Sample API" \
   --output API.md sample.goose
 ```
 
@@ -41,11 +41,11 @@ The reference includes the function's signature, description, example, and
 a link to its source. Pass multiple source files in the order you want them
 documented. Imports are not followed. Without `--output`, Markdown goes to stdout.
 
-To build a reusable command instead, run this from the goosdoc checkout:
+To build a reusable command instead, run this from the goose-doc checkout:
 
 ```sh
-goose build main.goose -O2 -o goosdoc
-./goosdoc --help
+goose build main.goose -O2 -o goose-doc
+./goose-doc --help
 ```
 
 ## Write comments for readers
@@ -62,7 +62,7 @@ nested functions are not included.
 
 ## Choose what to publish
 
-By default, goosdoc includes every top-level declaration it supports, including
+By default, goose-doc includes every top-level declaration it supports, including
 helpers. To select your public API, create `api.txt` with qualified names:
 
 ```text
@@ -72,7 +72,7 @@ sample::twice
 Then generate only those entries:
 
 ```sh
-goose run ../goosdoc/main.goose -- --symbols api.txt --require-docs \
+goose run ../goose-doc/main.goose -- --symbols api.txt --require-docs \
   --title "Sample API" --output API.md sample.goose
 ```
 
@@ -97,7 +97,7 @@ import sample from "..";
 Run the examples from your library directory:
 
 ```sh
-python3 ../goosdoc/doctest.py --symbols api.txt \
+python3 ../goose-doc/doctest.py --symbols api.txt \
   --preamble tests/doc_preamble.goose --require-examples sample.goose
 ```
 
@@ -128,20 +128,20 @@ Commit `API.md` and regenerate it when the source or comments change. Add
 In CI, check the committed reference and run the examples:
 
 ```sh
-goose run ../goosdoc/main.goose -- --symbols api.txt --require-docs \
+goose run ../goose-doc/main.goose -- --symbols api.txt --require-docs \
   --require-examples --title "Sample API" --output API.md --check sample.goose
-python3 ../goosdoc/doctest.py --symbols api.txt \
+python3 ../goose-doc/doctest.py --symbols api.txt \
   --preamble tests/doc_preamble.goose --require-examples sample.goose
 ```
 
 `--check` fails if the reference is missing or stale and never rewrites it.
-Pin Goose and goosdoc revisions in CI, and make these checks prerequisites
+Pin Goose and goose-doc revisions in CI, and make these checks prerequisites
 for your release. Add native example runs for the compilers you support.
 
 For a release artifact with permanent GitHub source links:
 
 ```sh
-goose run ../goosdoc/main.goose -- --symbols api.txt --require-docs \
+goose run ../goose-doc/main.goose -- --symbols api.txt --require-docs \
   --source-url "https://github.com/$GITHUB_REPOSITORY/blob/$GITHUB_SHA" \
   --output API-release.md sample.goose
 ```
@@ -159,13 +159,13 @@ Relative source links assume `API.md` lives at the library root.
 For another example runner, extract snippets as JSON lines:
 
 ```sh
-goose run ../goosdoc/main.goose -- --examples --symbols api.txt sample.goose
+goose run ../goose-doc/main.goose -- --examples --symbols api.txt sample.goose
 ```
 
 Each record has `path`, qualified `name`, the one-based first code `line`, and
 `code`. Extraction does not execute snippets.
 
-goosdoc preserves written signatures; it does not infer types or typecheck
+goose-doc preserves written signatures; it does not infer types or typecheck
 your library. Run `goose check` separately. See `--help` for all CLI options.
 
 ## Contributing
@@ -175,11 +175,24 @@ From this checkout, with Goose on `PATH`:
 ```sh
 python3 tests/run.py --cc gcc
 python3 tests/run.py --cc clang
-goose run main.goose -- --title "goosdoc API" --symbols api.txt \
-  --require-docs --require-examples --output API.md goosdoc.goose
+goose run main.goose -- --title "goose-doc API" --symbols api.txt \
+  --require-docs --require-examples --output API.md doc.goose
 python3 doctest.py --symbols api.txt --preamble tests/doc_preamble.goose \
-  --require-examples goosdoc.goose
+  --require-examples doc.goose
 ```
+
+## Migration from goosdoc
+
+The repository is now [sstadick/goose-doc](https://github.com/sstadick/goose-doc).
+Replace `import goosdoc from "github.com/sstadick/goosdoc@<ref>";` with
+`import doc from "github.com/sstadick/goose-doc@<migration-or-later-ref>";`
+and change `goosdoc::` to `doc::`. The entry file is `doc.goose`.
+Function and type names are unchanged; owned-struct UFCS remains supported.
+Old release tags retain the old entry file and namespace, so do not use the
+new import identifier with a pre-migration revision. No compatibility wrapper
+is provided.
+
+The CLI is now `goose-doc` (build `main.goose -o goose-doc`), not `goosdoc`.
 
 ## License
 
