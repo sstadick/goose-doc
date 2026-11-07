@@ -1,4 +1,4 @@
-namespace goosdoc;
+namespace doc;
 
 import std;
 import os;
@@ -9,7 +9,7 @@ import json;
 // doc_line identifies the first attached comment line, or line if absent.
 //
 // ```goose
-// let entries = goosdoc::parse("// Add two numbers.\nfn add(a: i64, b: i64) -> i64 { a + b }");
+// let entries = doc::parse("// Add two numbers.\nfn add(a: i64, b: i64) -> i64 { a + b }");
 // assert(entries.len == 1);
 // for entry in entries {
 //     assert(entry.name == "add");
@@ -31,7 +31,7 @@ struct Token {
 }
 
 fn fail(message: const u8[:]) {
-    write_stderr("goosdoc: ");
+    write_stderr("goose-doc: ");
     write_stderr(message);
     write_stderr("\n");
     exit(1);
@@ -175,7 +175,7 @@ fn modifier(t: const u8[:]) -> bool {
 // this is a source scanner, not a substitute for `goose check`.
 //
 // ```goose
-// let entries = goosdoc::parse("namespace math;\n// Double.\nfn twice(n: i64) -> i64 { n * 2 }");
+// let entries = doc::parse("namespace math;\n// Double.\nfn twice(n: i64) -> i64 { n * 2 }");
 // assert(entries.len == 1);
 // for entry in entries {
 //     assert(entry.name == "math::twice");
@@ -297,10 +297,10 @@ fn parse(source: const u8[:]) -> Entry[>..] {
 // and unclosed fences are errors. Extraction never executes the examples.
 //
 // ```goose
-// let entries = goosdoc::parse("// ```goose\n// assert(2 + 3 == 5);\n// ```\nfn demo() {}");
+// let entries = doc::parse("// ```goose\n// assert(2 + 3 == 5);\n// ```\nfn demo() {}");
 // var records: u8[>..] = [];
 // for entry in entries {
-//     assert(goosdoc::examples(records, entry, "demo.goose") == 1);
+//     assert(doc::examples(records, entry, "demo.goose") == 1);
 // }
 // assert(find(records, "assert(2 + 3 == 5);") >= 0);
 // ```
@@ -361,9 +361,9 @@ fn url_path(out: u8[>..]&, path: const u8[:]) {
 // id must be unique in the document; it also identifies this entry in the index.
 //
 // ```goose
-// let entries = goosdoc::parse("// Say hello.\nfn hello() {}");
+// let entries = doc::parse("// Say hello.\nfn hello() {}");
 // var markdown: u8[>..] = [];
-// for entry in entries { goosdoc::render(markdown, entry, "hello.goose", "", 1); }
+// for entry in entries { doc::render(markdown, entry, "hello.goose", "", 1); }
 // assert(find(markdown, "[source](hello.goose#L2-L2)") >= 0);
 // assert(find(markdown, "Say hello.") >= 0);
 // ```

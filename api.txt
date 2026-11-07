@@ -1,5 +1,5 @@
 # The supported extraction and rendering interface, not scanner internals.
-goosdoc::Entry
-goosdoc::parse
-goosdoc::examples
-goosdoc::render
+doc::Entry
+doc::parse
+doc::examples
+doc::render

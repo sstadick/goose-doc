@@ -1,2 +1,2 @@
 import std;
-import goosdoc from "..";
+import doc from "..";

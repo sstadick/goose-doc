@@ -102,7 +102,7 @@ def exercise(command, tmp):
     assert "duplicate symbol" in cli(*opts, ok=False).stderr
     assert "unknown option" in cli("--oops", ok=False).stderr
     assert "needs a value" in cli("--title", ok=False).stderr
-    assert "Usage:" in cli("--help").stdout
+    assert "Usage: goose-doc " in cli("--help").stdout
 
     prefix = "https://github.com/example/library/blob/" + "a1" * 20
     linked = cli("--source-url", prefix + "/", "--root", tmp, fixture.name).stdout
@@ -168,17 +168,17 @@ def exercise_runner(tmp, cc):
     assert "no executable examples" in run([part for part in command if part != "--require-examples"], ok=False).stderr
     source.write_text(original.replace("assert(value == 6);", "while true {}"))
     assert "exceeded" in run(command + ["--timeout", "3"], ok=False).stderr
-    assert not list(root.glob(".goosdoc-*")), "temporary programs were not cleaned up"
+    assert not list(root.glob(".goose-doc-*")), "temporary programs were not cleaned up"
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--cc", default="gcc")
     args = parser.parse_args()
-    with tempfile.TemporaryDirectory(prefix="goosdoc-test-") as directory:
+    with tempfile.TemporaryDirectory(prefix="goose-doc-test-") as directory:
         tmp = Path(directory)
         exercise([GOOSE, "run", str(ROOT / "main.goose"), "--"], tmp)
-        exe = tmp / "goosdoc"
+        exe = tmp / "goose-doc"
         run([GOOSE, "build", str(ROOT / "main.goose"), "--cc", args.cc, "-O2", "-o", str(exe)])
         exercise([str(exe)], tmp)
         exercise_runner(tmp, args.cc)
