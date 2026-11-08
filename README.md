@@ -170,7 +170,12 @@ your library. Run `goose check` separately. See `--help` for all CLI options.
 
 ## Contributing
 
-From this checkout, with Goose on `PATH`:
+CI and local maintenance checks use Goose revision
+[`a12523f23e545a6af350562804a0c8b201864946`](https://github.com/aardappel/goose/commit/a12523f23e545a6af350562804a0c8b201864946),
+built with `-DCMAKE_BUILD_TYPE=Debug -DGOOSE_BUILTIN_LIBS=`.
+
+From this checkout, with that Goose on `PATH` and `GOOSE` unset or pointing
+to the same executable:
 
 ```sh
 python3 tests/run.py --cc gcc
