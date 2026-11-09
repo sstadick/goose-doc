@@ -171,7 +171,7 @@ your library. Run `goose check` separately. See `--help` for all CLI options.
 ## Contributing
 
 CI and local maintenance checks use Goose revision
-[`a12523f23e545a6af350562804a0c8b201864946`](https://github.com/aardappel/goose/commit/a12523f23e545a6af350562804a0c8b201864946),
+[`f4637bfb342fb70d42bea0474eab9e62a3c99d68`](https://github.com/aardappel/goose/commit/f4637bfb342fb70d42bea0474eab9e62a3c99d68),
 built with `-DCMAKE_BUILD_TYPE=Debug -DGOOSE_BUILTIN_LIBS=`.
 
 From this checkout, with that Goose on `PATH` and `GOOSE` unset or pointing
