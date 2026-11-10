@@ -115,6 +115,22 @@ def exercise(command, tmp):
     ids = re.findall(r'<a id="([^"]+)">', combined)
     assert len(ids) == len(set(ids)) == 17
     assert all(f"](#{anchor})" in combined for anchor in ids)
+    # A root struct is documented under its own name and keeps its marker. It is
+    # not in the fixture because the Goose that CI pins predates root structs.
+    second.write_text(
+        "namespace sample;\n// A rooted tree.\nroot struct Tree<T> { items: T[>..] }\n"
+        "// After the root struct.\nfn after(root: i64) -> i64 { root }\n"
+        "let root = 1;\n"
+    )
+    rooted = cli(second.name).stdout
+    assert re.findall(r"^## `(.+)`$", rooted, re.M) == ["sample::Tree", "sample::after"]
+    assert "```goose\nroot struct Tree<T> { items: T[>..] }\n```\n\nA rooted tree." in rooted
+    assert "second.goose#L3-L3" in rooted
+    # An unknown top-level form fails; skipping it would drop what follows.
+    second.write_text("fn before() {}\nmystery struct Tree {}\nfn after() {}\n")
+    unknown = cli(second.name, "--output", target, ok=False).stderr
+    assert "line 2: unsupported top-level declaration" in unknown
+    assert target.read_text() == selected
     for broken in ['fn broken() {', 'fn broken(x: i64[3) {}', '/* unclosed',
                    'fn broken(s: u8[:] = "bad) {}', 'extern "m" { fn x();']:
         second.write_text(broken)

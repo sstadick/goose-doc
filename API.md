@@ -41,7 +41,7 @@ for entry in entries {
 
 ## `doc::parse`
 
-[source](doc.goose#L185-L291)
+[source](doc.goose#L186-L305)
 
 ```goose
 fn parse(source: const u8[:]) -> Entry[>..]
@@ -50,7 +50,8 @@ fn parse(source: const u8[:]) -> Entry[>..]
 Extract top-level functions, structs, enums and aliases in source order.
 Keeps overloads separate and attaches consecutive standalone // comments
 immediately above a declaration, following Goose's documentation convention.
-Imports are not followed. Malformed delimiters or literals exit with status 1;
+Imports are not followed. Malformed delimiters or literals and top-level
+forms that are not declarations, imports or globals exit with status 1;
 this is a source scanner, not a substitute for `goose check`.
 
 ```goose
@@ -66,7 +67,7 @@ for entry in entries {
 
 ## `doc::examples`
 
-[source](doc.goose#L307-L349)
+[source](doc.goose#L321-L363)
 
 ```goose
 fn examples(out: u8[>..]&, entry: const Entry&, path: const u8[:]) -> i64
@@ -91,7 +92,7 @@ assert(find(records, "assert(2 + 3 == 5);") >= 0);
 
 ## `doc::render`
 
-[source](doc.goose#L370-L384)
+[source](doc.goose#L384-L398)
 
 ```goose
 fn render(out: u8[>..]&, entry: const Entry&, path: const u8[:], source_url: const u8[:], id: i64)

@@ -171,7 +171,8 @@ fn modifier(t: const u8[:]) -> bool {
 // Extract top-level functions, structs, enums and aliases in source order.
 // Keeps overloads separate and attaches consecutive standalone // comments
 // immediately above a declaration, following Goose's documentation convention.
-// Imports are not followed. Malformed delimiters or literals exit with status 1;
+// Imports are not followed. Malformed delimiters or literals and top-level
+// forms that are not declarations, imports or globals exit with status 1;
 // this is a source scanner, not a substitute for `goose check`.
 //
 // ```goose
@@ -205,6 +206,11 @@ fn parse(source: const u8[:]) -> Entry[>..] {
             in_extern = false;
             i += 1;
             continue;
+        }
+        // `root` is contextual: it marks a struct only directly before one.
+        if t == "root" && text(source, tokens, i + 1) == "struct" {
+            i += 1;
+            t = "struct";
         }
         while modifier(t) {
             let was_extern = t == "extern";
@@ -276,6 +282,14 @@ fn parse(source: const u8[:]) -> Entry[>..] {
                 doc_line: doc_line,
             });
         } else {
+            // Skipping an unknown form would swallow the declarations up to
+            // the next top-level semicolon, so it is an error instead.
+            if !(t == "import" || t == "let" || t == "var" || t == "const" || t == "reusable") {
+                var message: u8[>..] = [];
+                message.append("line "); format(message, tokens[start].line);
+                message.append(": unsupported top-level declaration");
+                fail(message);
+            }
             // Skip imports and global initializers, including nested functions.
             while i < tokens.len && text(source, tokens, i) != ";" {
                 t = text(source, tokens, i);
