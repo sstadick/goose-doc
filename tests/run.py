@@ -115,8 +115,8 @@ def exercise(command, tmp):
     ids = re.findall(r'<a id="([^"]+)">', combined)
     assert len(ids) == len(set(ids)) == 17
     assert all(f"](#{anchor})" in combined for anchor in ids)
-    # A root struct is documented under its own name and keeps its marker. It is
-    # not in the fixture because the Goose that CI pins predates root structs.
+    # A root struct is documented under its own name and keeps its marker.
+    # Keep it separate so the fixture also works with pre-root-struct compilers.
     second.write_text(
         "namespace sample;\n// A rooted tree.\nroot struct Tree<T> { items: T[>..] }\n"
         "// After the root struct.\nfn after(root: i64) -> i64 { root }\n"
