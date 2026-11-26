@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: aardappel/goose
-          ref: 4602c98660676b2cb94bc9b06fec8c65b37fce92
+          ref: 1838de45b8823cac6c3e02a431f0134012212d39
           path: .ci/goose
           persist-credentials: false
       - name: Build Goose
